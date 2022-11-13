@@ -230,6 +230,9 @@ public class RubyController : MonoBehaviour
         if (currentHealth <= 0)
         {
             LoseTextObject.SetActive(true);
+
+            transform.position = new Vector3(-5f, 0f, -100f);
+            speed = 0;
             Destroy(gameObject.GetComponent<SpriteRenderer>());
 
             gameOver = true;
@@ -277,7 +280,9 @@ public class RubyController : MonoBehaviour
             if (scoreFixed >= 6)
             {
                WinTextObject2.SetActive(true);
-
+                
+                transform.position = new Vector3(-5f, 0f, -100f);
+                speed = 0;
                 Destroy(gameObject.GetComponent<SpriteRenderer>());
 
                 audioSource.clip = BackGroundMusic;
