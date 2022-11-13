@@ -12,14 +12,23 @@ public class EnemyController : MonoBehaviour
      Rigidbody2D rigidbody2D;
      float timer;
     int direction = 1;
-      bool broken = true;
+    bool broken = true;
     Animator animator;
+
+    // Ruby Controller
+    private RubyController rubyController;
     // Start is called before the first frame update
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         timer = changeTime;
+        
+        // animator
         animator = GetComponent<Animator>();
+
+        //Ruby
+        GameObject rubyControllerObject = GameObject.FindWithTag("RubyController");
+        rubyController = rubyControllerObject.GetComponent<RubyController>();
     }
       void Update()
     {
@@ -78,10 +87,21 @@ public class EnemyController : MonoBehaviour
     {
         broken = false;
         rigidbody2D.simulated = false;
+       
         //optional if you added the fixed animation
         animator.SetTrigger("Fixed");
+       
+        // partilces
+        smokeEffect.Stop();
 
-         smokeEffect.Stop();
+        if (rubyController != null)
+        {
+            rubyController.FixedRobots(1);
+        }
+         
     }
+    
+
+    
 
 }

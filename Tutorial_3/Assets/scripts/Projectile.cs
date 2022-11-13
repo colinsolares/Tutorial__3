@@ -28,6 +28,22 @@ public class Projectile : MonoBehaviour
     
         Destroy(gameObject);
 
+        
+
+HardEnemyController he = other.collider.GetComponent<HardEnemyController>(); //This code is storing a reference to the EnemyController script, so you'd want a similar one for your HardEnemyController
+
+    if (he != null)
+
+    {
+
+        he.Fix(); // this code is calling the "Fix" function in the EnemyController script when the projectile hits the Enemy, so you'd want a similar one for your HardEnemyController
+
+    }
+
+    Destroy(gameObject);
+
+
+
     }
 
     // Update is called once per frame
