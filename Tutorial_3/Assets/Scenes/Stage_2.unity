@@ -2358,12 +2358,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'You Win!! Press Q to Play Win Music
-
-    Game created by Colin Solares
-
-    Press
-    k to Replay'
+  m_text: "You Win!! \nGame created by Colin Solares\nPress k to Replay"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3698,6 +3693,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 597574109}
     m_Modifications:
+    - target: {fileID: 1660583673887271973, guid: 4e8d8db743e035647b5b3a8720ef0dce, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 1660583673887271973, guid: 4e8d8db743e035647b5b3a8720ef0dce, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1697767089898591738, guid: 4e8d8db743e035647b5b3a8720ef0dce, type: 3}
       propertyPath: m_Name
       value: CollectibleHealth (1)

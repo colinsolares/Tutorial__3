@@ -272,29 +272,20 @@ public class RubyController : MonoBehaviour
             if (scoreFixed >= 6)
             {
             WinTextObject1.SetActive(true);
+            
+            Destroy(gameObject.GetComponent<SpriteRenderer>());
+
+            audioSource.clip = BackGroundMusic;
+            audioSource.Stop();
+
+            audioSource.clip = WinClip;
+            audioSource.Play();
+                
+            gameOver = true; 
             }
         }    
-         //win text (only level 2)
-            if (level == 2)
-        {
-            if (scoreFixed >= 6)
-            {
-               WinTextObject2.SetActive(true);
-                
-                transform.position = new Vector3(-5f, 0f, -100f);
-                speed = 0;
-                Destroy(gameObject.GetComponent<SpriteRenderer>());
-
-                audioSource.clip = BackGroundMusic;
-                audioSource.Stop();
-
-                audioSource.clip = WinClip;
-                audioSource.Play();
-                
-                gameOver = true;
-                
-            }
-        }
+        
+       
         
      }
 
