@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d2c9dd21562234e83c5e954607358a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectedClip: {fileID: 8300000, guid: af5f8b64e3f58f24c87ff8f789b04f6c, type: 3}
+  collectedClip: {fileID: 8300000, guid: 7d07bbc52461a14439ddb3c1b405dd4c, type: 3}
 --- !u!61 &4772120112221323436
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -35,7 +35,13 @@ public class RubyController : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip WinClip;
     public AudioClip GameOver;
+    public AudioClip Jambi;
+    public AudioClip tickingSound;
     
+    // Speed Boost Timer
+    public float timeBoosting = 4.0f;
+    float speedBoostTimer;
+    bool isBoosting;
 
     
   
@@ -47,15 +53,29 @@ public class RubyController : MonoBehaviour
     public TextMeshProUGUI fixedText;
     private int scoreFixed = 0;
 
+
     // Win text and Lose Text and Restart bool
     public GameObject WinTextObject1;
     public GameObject  WinTextObject2;
     public GameObject LoseTextObject;
     public GameObject ammoTextObject;
     bool gameOver;
+    bool winGame;
 
     //levels 
-    public static int level;
+    public static int level = 1;
+
+    // Variables for Timer
+    [SerializeField] private TextMeshProUGUI timerUI; // Attach TMP object to this slot
+    [SerializeField] private float mainTimer; // Change this value to your liking in Unity
+
+    private float timer;
+    private bool canCount = false;
+    private bool doOnce = false;
+    private bool hasPressedKey = false;
+    private bool hasMoved = false;
+
+    public GameObject TimerObject; // This is your Timer text in the Canvas
 
     
     // Start is called before the first frame update
@@ -76,12 +96,20 @@ public class RubyController : MonoBehaviour
         // Fixed Robot Text
         fixedText.text = "Fixed Robots: " + scoreFixed.ToString() + "/6";
 
+    
+
         // Win Text and Lose text set to false, as well as restart bool
         WinTextObject1.SetActive(false);
         WinTextObject2.SetActive(false);
         LoseTextObject.SetActive(false);
         gameOver = false;
-        level = 1;
+        winGame = false;
+        
+
+        
+        // Timer
+        timer = mainTimer;
+        TimerObject.SetActive(false);
     }
 
     public void PlaySound(AudioClip clip)
@@ -117,9 +145,23 @@ public class RubyController : MonoBehaviour
         {
            
             
-            SceneManager.LoadScene("MainScene"); 
+            SceneManager.LoadScene("Level 1"); 
+            level = 1;
             
         } 
+
+        // Speed Boost Timer
+        if (isBoosting == true)
+        {
+            speedBoostTimer -= Time.deltaTime; // Once speed boost activates, it counts down
+            speed = 8;
+        
+            if (speedBoostTimer < 0)
+            {
+                isBoosting = false;
+                speed = 5; 
+            }
+        }
         
         // ruby animation
         horizontal = Input.GetAxis("Horizontal");
@@ -165,26 +207,123 @@ public class RubyController : MonoBehaviour
                 NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
                 if (character != null)
                 {
+                  PlaySound(Jambi);
+
                 character.DisplayDialog();
                 }  
             }
+            
 
             if (scoreFixed >= 6)
             {
-                SceneManager.LoadScene("Stage_2");
+                SceneManager.LoadScene("Level 2");
                 level = 2;
             }
         }
-        
+         if (Input.GetKeyDown(KeyCode.I))
+         {
+            RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("Dog"));
+            if (hit.collider != null)
+            {
+                
+                NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
+                if (character != null)
+                {
+                  PlaySound(Jambi);
+
+                character.DisplayDialog();
+                }  
+            }
+         }
+
+          if (Input.GetKeyDown(KeyCode.P))
+          {
+             RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("Cat"));
+            if (hit.collider != null)
+            {
+                
+                NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
+                if (character != null)
+                {
+                  PlaySound(Jambi);
+
+                character.DisplayDialog();
+                }  
+            }
+          }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             
             audioSource.clip = BackGroundMusic;
             audioSource.Stop();
 
+             audioSource.clip = tickingSound;
+            audioSource.Stop();
+
             audioSource.clip = WinClip;
             audioSource.Play();
         }
+
+
+          // Timer Main Code
+        // Press this key to activate timer
+        if (hasMoved == false)
+        {
+            if (hasPressedKey == false)
+            {
+                if (Input.GetKeyDown(KeyCode.T))
+                {
+                    timer = mainTimer;
+                    canCount = true;
+                    doOnce = false;
+                    TimerObject.SetActive(true);
+
+                    // Ticking Sound Starts
+                    PlaySound(tickingSound);
+            
+                    hasPressedKey = true;
+                }
+            }
+        }
+
+         // Timer functionality
+        if (timer >= 0.0f && canCount)
+        {
+            timer -= Time.deltaTime;
+            timerUI.text = "Time: " + timer.ToString("F");
+        }
+
+         else if (timer <= 0.0f && !doOnce)
+        {
+            canCount = false;
+            doOnce = true;
+            timerUI.text = "Time: " + timer.ToString("0.00");
+
+            // Lose State
+            LoseTextObject.SetActive(true);
+
+            transform.position = new Vector3(-5f, 0f, -100f);
+            speed = 0;
+            Destroy(gameObject.GetComponent<SpriteRenderer>());
+
+            gameOver = true;
+
+            // BackgroundMusicManager is turned off
+            audioSource.clip = BackGroundMusic;
+            audioSource.Stop();
+
+           
+
+            // Ticking Sound Stops
+            audioSource.clip = tickingSound;
+            audioSource.Stop();
+
+             // Calls sound script and plays lose sound
+            audioSource.clip = GameOver;
+            audioSource.Play();
+        }
+
+        
     }
 
     
@@ -198,6 +337,8 @@ public class RubyController : MonoBehaviour
 
         rigidbody2d.MovePosition(position);
      }
+
+  
 
      public void ChangeHealth(int amount)
     {
@@ -230,6 +371,10 @@ public class RubyController : MonoBehaviour
         if (currentHealth <= 0)
         {
             LoseTextObject.SetActive(true);
+            if (level ==1 )
+            {
+                WinTextObject1.SetActive(false);
+            }
 
             transform.position = new Vector3(-5f, 0f, -100f);
             speed = 0;
@@ -242,6 +387,8 @@ public class RubyController : MonoBehaviour
             audioSource.clip = GameOver;
             audioSource.Play();
         }
+
+        
 
         
     }
@@ -267,23 +414,44 @@ public class RubyController : MonoBehaviour
         Debug.Log("Fixed Robots: " + scoreFixed);
         
          // Win Text1 Appears
-        if (level == 1)
+        if (scoreFixed == 6 && level == 1)
         { 
-            if (scoreFixed >= 6)
-            {
-            WinTextObject1.SetActive(true);
             
+            WinTextObject1.SetActive(true);
+            canCount = false;
+            doOnce = true;
+
+           
+            
+        }   
+           
+           
+        if (scoreFixed == 6 && level == 2)
+        { 
+
+             WinTextObject1.SetActive(true);
+            winGame = true;
             Destroy(gameObject.GetComponent<SpriteRenderer>());
+             
+             // Disables time attack on level
+            canCount = false;
+            doOnce = true;
+
+            // Ticking Sound Stops
+           
 
             audioSource.clip = BackGroundMusic;
+            audioSource.Stop();
+
+            audioSource.clip = tickingSound;
             audioSource.Stop();
 
             audioSource.clip = WinClip;
             audioSource.Play();
                 
             gameOver = true; 
-            }
-        }    
+        }
+            
         
        
         
@@ -301,5 +469,16 @@ public class RubyController : MonoBehaviour
         Debug.Log("Ammo: " + currentAmmo);
     }
 
+
+      public void SpeedBoost(int amount)
+    {
+        if (amount > 0)
+        {
+            speedBoostTimer = timeBoosting;
+            isBoosting = true;
+        }
+    }
+
+    
 
 }
